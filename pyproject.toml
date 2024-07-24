@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "upto"
+version = "0.1.0"
+description = ""
+authors = ["Lukas Plank <lupl@tuta.io>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+toolz = "^0.12.1"
+pydantic = "^2.8.2"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.1"
+pytest-cov = "^5.0.0"
+pytest-randomly = "^3.15.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
