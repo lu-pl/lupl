@@ -1,4 +1,6 @@
-# UPTo - Personal collection of potentially generally useful Python tools.
+# UPTo 🐱
+
+UPTo - A personal collection of potentially generally Useful Python tools.
 
 
 ## ComposeRouter
