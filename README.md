@@ -1,4 +1,4 @@
-# LooTs - A loose collection of potentially useful Python tools.
+# UPTo - Personal collection of potentially generally useful Python tools.
 
 
 ## ComposeRouter
@@ -7,7 +7,7 @@ through a functional pipeline constructed from components.
 The pipeline is only triggered if a registered method is accessed via the ComposeRouter namespace.
 
 ```python
-from loots import ComposeRouter
+from upto import ComposeRouter
 
 class Foo:
 	route = ComposeRouter(lambda x: x + 1, lambda y: y * 2)
@@ -26,7 +26,7 @@ print(foo.route.method(2, 3))     # 13
 The CurryModel constructor allows to sequentially initialize (curry) a Pydantic model.
 
 ```python
-from loots import CurryModel
+from upto import CurryModel
 
 class MyModel(BaseModel):
     x: str
