@@ -1,4 +1,4 @@
-# UPTo 🐱
+# UPTo 😺
 
 UPTo - A personal collection of potentially generally Useful Python tools.
 
