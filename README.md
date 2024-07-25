@@ -2,7 +2,7 @@
 
 [![PyPI version](https://badge.fury.io/py/upto.svg)](https://badge.fury.io/py/upto)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![image](https://img.shields.io/pypi/v/ruff.svg)](https://pypi.python.org/pypi/ruff)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 UPTo - A personal collection of potentially generally Useful Python Tools.
 
