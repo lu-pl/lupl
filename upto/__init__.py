@@ -1,2 +1,3 @@
 from upto.compose_router import ComposeRouter
 from upto.pydantic_tools.curry_model import CurryModel
+from upto.pydantic_tools.model_constructors import init_model_from_kwargs
