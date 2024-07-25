@@ -28,7 +28,9 @@ print(foo.method(2, 3))           # 6
 print(foo.route.method(2, 3))     # 13
 ```
 
-## CurryModel
+## Pydantic Tools
+
+### CurryModel
 The CurryModel constructor allows to sequentially initialize (curry) a Pydantic model.
 
 ```python
@@ -63,4 +65,40 @@ Currying turns a function of arity n into at most n functions of arity 1 and at 
 curried_model_3 = CurryModel(MyModel)
 model_instance_3 = curried_model_3(x="1", y=2)(z=("3", 4))
 print(model_instance_3)
+```
+
+### init_model_from_kwargs
+
+The `init_model_from_kwargs` constructor allows to initialize (potentially nested) models from (flat) kwargs.
+
+```python
+class SimpleModel(BaseModel):
+    x: int
+    y: int = 3
+
+
+class NestedModel(BaseModel):
+    a: str
+    b: SimpleModel
+
+
+class ComplexModel(BaseModel):
+    p: str
+    q: NestedModel
+
+
+# p='p value' q=NestedModel(a='a value', b=SimpleModel(x=1, y=2))
+model_instance_1 = init_model_from_kwargs(
+    ComplexModel, x=1, y=2, a="a value", p="p value"
+)
+
+# p='p value' q=NestedModel(a='a value', b=SimpleModel(x=1, y=3))
+model_instance_2 = init_model_from_kwargs(
+    ComplexModel, p="p value", q=NestedModel(a="a value", b=SimpleModel(x=1))
+)
+
+# p='p value' q=NestedModel(a='a value', b=SimpleModel(x=1, y=3))
+model_instance_3 = init_model_from_kwargs(
+    ComplexModel, p="p value", q=init_model_from_kwargs(NestedModel, a="a value", x=1)
+)
 ```
