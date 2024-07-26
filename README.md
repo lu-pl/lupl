@@ -1,5 +1,7 @@
 # UPTo
 
+![tests](https://github.com/lu-pl/upto/actions/workflows/tests.yml/badge.svg)
+[![coverage](https://coveralls.io/repos/github/lu-pl/upto/badge.svg?branch=main)](https://coveralls.io/github/lu-pl/upto?branch=main)
 [![PyPI version](https://badge.fury.io/py/upto.svg)](https://badge.fury.io/py/upto)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
