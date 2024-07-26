@@ -39,7 +39,7 @@ jobs:
 
       - name: Run pyest-cov
         run: |
-          poetry run pytest --cov lodkit/ --cov-report xml
+          poetry run pytest --cov upto/ --cov-report xml
           
       - name: Upload coverage data to coveralls
         uses: coverallsapp/github-action@v2.2.3
