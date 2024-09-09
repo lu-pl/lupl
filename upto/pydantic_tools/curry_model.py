@@ -23,10 +23,15 @@ class CurryModel[ModelType: BaseModel]:
         print(model_instance)
     """
 
-    def __init__(self, model: type[ModelType]) -> None:
+    def __init__(self, model: type[ModelType], eager: bool = True) -> None:
         self.model = model
-        self._kwargs_cache: dict = {}
-        self._model_fields: dict = model.model_fields
+        self.eager = eager
+
+        self._kwargs_cache: dict = (
+            {k: v.default for k, v in model.model_fields.items() if not v.is_required()}
+            if eager
+            else {}
+        )
 
     def __repr__(self):  # pragma: no cover
         return f"CurryModel object {self._kwargs_cache}"
@@ -40,11 +45,11 @@ class CurryModel[ModelType: BaseModel]:
         return result
 
     def __call__(self, **kwargs: Any) -> Self | ModelType:
-        self._kwargs_cache.update(kwargs)
-
         for k, v in kwargs.items():
             self._validate_field(self.model, k, v)
 
-        if self._model_fields.keys() == self._kwargs_cache.keys():
+        self._kwargs_cache.update(kwargs)
+
+        if self.model.model_fields.keys() == self._kwargs_cache.keys():
             return self.model(**self._kwargs_cache)
         return self
