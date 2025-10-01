@@ -2,30 +2,51 @@
 
 from typing import Any, Self
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 
-class CurryModel[ModelType: BaseModel]:
-    """Constructor for currying a Pydantic Model.
+def validate_model_field(model: type[BaseModel], field: str, value: Any) -> Any:
+    """Validate value for a single field given a model.
 
-    Example:
-
-        class MyModel(BaseModel):
-            x: str
-            y: int
-            z: tuple[str, int]
-
-        curried_model = CurryModel(MyModel)
-        curried_model(x="1")
-        curried_model(y=2)
-
-        model_instance = curried_model(z=("3", 4))
-        print(model_instance)
+    Note: Using a TypeVar for value is not possible here,
+    because Pydantic might coerce values (if not not in Strict Mode).
     """
 
-    def __init__(self, model: type[ModelType], eager: bool = True) -> None:
+    if field not in model.model_fields:
+        raise ValueError(f"'{field}' does not denote a field of model '{model}'.")
+
+    try:
+        model(**{field: value})
+    except ValidationError as e:
+        for error in e.errors():
+            if field in error["loc"]:
+                raise ValidationError.from_exception_data(model.__name__, [error])
+
+    return value
+
+
+class CurryModel[_TModelInstance: BaseModel]:
+    """Constructor for currying a Pydantic Model.
+
+    A CurryModel instance can be called with kwargs which are run against
+    the respective model field validators and kept in a kwargs cache.
+    Once the model can be instantiated, calling a CurryModel object will
+    instantiate the Pydantic model and return the model instance.
+
+    If the eager flag is True (default), model field default values are
+    added to the cache automatically, which means that models can be instantiated
+    as soon possible, i.e. as soon as all /required/ field values are provided.
+
+    If the fail_fast flag is True (default), the constructor raises a ValueError
+    as soon as a value fails to validate against a field constraint.
+    """
+
+    def __init__(
+        self, model: type[_TModelInstance], eager: bool = True, fail_fast: bool = True
+    ) -> None:
         self.model = model
         self.eager = eager
+        self.fail_fast = fail_fast
 
         self._kwargs_cache: dict = (
             {k: v.default for k, v in model.model_fields.items() if not v.is_required()}
@@ -36,17 +57,10 @@ class CurryModel[ModelType: BaseModel]:
     def __repr__(self):  # pragma: no cover
         return f"CurryModel object {self._kwargs_cache}"
 
-    @staticmethod
-    def _validate_field[T](model: type[ModelType], field: T, value: Any) -> T:
-        """Validate value for a single field given a model."""
-        result = model.__pydantic_validator__.validate_assignment(
-            model.model_construct(), field, value
-        )
-        return result
-
-    def __call__(self, **kwargs: Any) -> Self | ModelType:
-        for k, v in kwargs.items():
-            self._validate_field(self.model, k, v)
+    def __call__(self, **kwargs: Any) -> Self | _TModelInstance:
+        if self.fail_fast:
+            for k, v in kwargs.items():
+                validate_model_field(self.model, k, v)
 
         self._kwargs_cache.update(kwargs)
 
