@@ -1,26 +1,27 @@
-[tool.poetry]
+[project]
 name = "upto"
 version = "0.1.0"
 description = ""
-authors = ["Lukas Plank <lupl@tuta.io>"]
+authors = [{ name = "Lukas Plank", email = "lupl@tuta.io" }]
+requires-python = "~=3.12"
 readme = "README.md"
+dependencies = [
+    "toolz>=0.12.1,<0.13",
+    "pydantic>=2.8.2,<3",
+]
 
-[tool.poetry.dependencies]
-python = "^3.12"
-toolz = "^0.12.1"
-pydantic = "^2.8.2"
-
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.3.1"
-pytest-cov = "^5.0.0"
-pytest-randomly = "^3.15.0"
-hypothesis = "^6.108.4"
-ruff = "^0.5.5"
+[dependency-groups]
+dev = [
+    "pytest>=8.3.1,<9",
+    "pytest-cov>=5.0.0,<6",
+    "pytest-randomly>=3.15.0,<4",
+    "hypothesis>=6.108.4,<7",
+    "ruff>=0.5.5,<0.6",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.ruff]
 lint.ignore = ["F401"]
