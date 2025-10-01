@@ -24,10 +24,25 @@ class Foo:
 	def method(self, x, y):
 		return x * y
 
-    foo = Foo()
+	foo = Foo()
 
 print(foo.method(2, 3))           # 6
 print(foo.route.method(2, 3))     # 13
+```
+
+## Chunk Iterator
+
+The `upto.ichunk` generator implements a simple chunk iterator that allows to lazily slice an Iterator into sub-iterators.
+
+```python
+from collections.abc import Iterator
+from upto import ichunk
+
+iterator: Iterator[int] = iter(range(10))
+chunks: Iterator[Iterator[int]] = ichunk(iterator, size=3)
+
+materialized = [tuple(chunk) for chunk in chunks]
+print(materialized)  # [(0, 1, 2), (3, 4, 5), (6, 7, 8), (9,)]
 ```
 
 ## Pydantic Tools
@@ -39,9 +54,9 @@ The CurryModel constructor allows to sequentially initialize (curry) a Pydantic 
 from upto import CurryModel
 
 class MyModel(BaseModel):
-    x: str
-    y: int
-    z: tuple[str, int]
+	x: str
+	y: int
+	z: tuple[str, int]
 
 
 curried_model = CurryModel(MyModel)
@@ -75,32 +90,32 @@ The `init_model_from_kwargs` constructor allows to initialize (potentially neste
 
 ```python
 class SimpleModel(BaseModel):
-    x: int
-    y: int = 3
+	x: int
+	y: int = 3
 
 
 class NestedModel(BaseModel):
-    a: str
-    b: SimpleModel
+	a: str
+	b: SimpleModel
 
 
 class ComplexModel(BaseModel):
-    p: str
-    q: NestedModel
+	p: str
+	q: NestedModel
 
 
 # p='p value' q=NestedModel(a='a value', b=SimpleModel(x=1, y=2))
 model_instance_1 = init_model_from_kwargs(
-    ComplexModel, x=1, y=2, a="a value", p="p value"
+	ComplexModel, x=1, y=2, a="a value", p="p value"
 )
 
 # p='p value' q=NestedModel(a='a value', b=SimpleModel(x=1, y=3))
 model_instance_2 = init_model_from_kwargs(
-    ComplexModel, p="p value", q=NestedModel(a="a value", b=SimpleModel(x=1))
+	ComplexModel, p="p value", q=NestedModel(a="a value", b=SimpleModel(x=1))
 )
 
 # p='p value' q=NestedModel(a='a value', b=SimpleModel(x=1, y=3))
 model_instance_3 = init_model_from_kwargs(
-    ComplexModel, p="p value", q=init_model_from_kwargs(NestedModel, a="a value", x=1)
+	ComplexModel, p="p value", q=init_model_from_kwargs(NestedModel, a="a value", x=1)
 )
 ```
