@@ -1,9 +1,6 @@
 """Pytest entry point for upto.CurryModel tests."""
 
-from typing import TypedDict
-
-from hypothesis import given
-from pydantic import BaseModel, create_model
+from pydantic import BaseModel, Field
 from upto import CurryModel
 
 
