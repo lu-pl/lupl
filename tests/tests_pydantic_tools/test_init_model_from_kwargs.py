@@ -5,7 +5,7 @@ import pytest
 from tests.data.init_model_from_kwargs_parameters import (
     init_model_from_kwargs_parameters,
 )
-from upto import init_model_from_kwargs
+from lupl import init_model_from_kwargs
 
 
 @pytest.mark.parametrize(("model", "kwargs"), init_model_from_kwargs_parameters)

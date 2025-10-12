@@ -1,9 +1,9 @@
-"""Basic test for upto.validate_model_field."""
+"""Basic test for lupl.validate_model_field."""
 
 import pytest
 
 from pydantic import BaseModel
-from upto import validate_model_field
+from lupl import validate_model_field
 
 
 def test_validate_model_field_sad_path_missing_field():
