@@ -1,5 +1,8 @@
-from upto.compose_router import ComposeRouter
-from upto.ichunk import ichunk
-from upto.pydantic_tools.curry_model import CurryModel, validate_model_field
-from upto.pydantic_tools.model_constructors import init_model_from_kwargs
-from upto.pydantic_tools.mutual_constraint_validator import _MutualConstraintMixin
+import warnings
+
+warnings.warn(
+    "This package has been renamed to renmaed to `lupl`."
+    "Please use the actively maintained `lupl` package."
+    DeprecationWarning,
+    stacklevel=2,
+)
