@@ -1,6 +1,6 @@
 [project]
 name = "upto"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = [{ name = "Lukas Plank", email = "lupl@tuta.io" }]
 requires-python = "~=3.12"
