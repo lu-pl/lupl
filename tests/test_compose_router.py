@@ -1,13 +1,12 @@
-"""Pytest entry point for upto.ComposeRouter tests."""
+"""Pytest entry point for lupl.ComposeRouter tests."""
 
+from lupl import ComposeRouter
 import pytest
-
 from toolz import compose
-from upto import ComposeRouter
 
 
 def test_simple_compose_router():
-    """Simple base test case for upto.ComposeRouter.
+    """Simple base test case for lupl.ComposeRouter.
 
     Check if the composed route generates the same result
     as the _components applied to the result of the method without routing.

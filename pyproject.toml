@@ -1,5 +1,5 @@
 [project]
-name = "upto"
+name = "lupl"
 version = "0.1.0"
 description = ""
 authors = [{ name = "Lukas Plank", email = "lupl@tuta.io" }]
@@ -25,3 +25,11 @@ build-backend = "hatchling.build"
 
 [tool.ruff]
 lint.ignore = ["F401"]
+
+exclude = [
+    "#*#",
+    ".#*",
+    ".git",
+    ".venv",
+    "__pycache__"
+]

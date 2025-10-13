@@ -1,10 +1,10 @@
-"""Basic tests for upto.ichunk."""
+"""Basic tests for lupl.ichunk."""
 
 from collections.abc import Iterator
 from typing import NamedTuple
 
+from lupl import ichunk
 import pytest
-from upto import ichunk
 
 
 class IChunkTestParameter(NamedTuple):

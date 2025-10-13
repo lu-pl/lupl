@@ -1,7 +1,7 @@
-"""Pytest entry point for upto.CurryModel tests."""
+"""Pytest entry point for lupl.CurryModel tests."""
 
 from pydantic import BaseModel, Field
-from upto import CurryModel
+from lupl import CurryModel
 
 
 def test_simple_curry_model():

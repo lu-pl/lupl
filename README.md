@@ -1,21 +1,27 @@
-# UPTo
+# lupl 👾😺
 
-![tests](https://github.com/lu-pl/upto/actions/workflows/tests.yml/badge.svg)
-[![coverage](https://coveralls.io/repos/github/lu-pl/upto/badge.svg?branch=main&kill_cache=1)](https://coveralls.io/github/lu-pl/upto?branch=main&kill_cache=1)
-[![PyPI version](https://badge.fury.io/py/upto.svg)](https://badge.fury.io/py/upto)
+![tests](https://github.com/lu-pl/lupl/actions/workflows/tests.yml/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/lu-pl/lupl/badge.svg?branch=lupl/rename)](https://coveralls.io/github/lu-pl/lupl?branch=lupl/rename)
+[![PyPI version](https://badge.fury.io/py/lupl.svg)](https://badge.fury.io/py/lupl)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 
-UPTo - A personal collection of potentially generally Useful Python Tools.
+A collection of potentially generally useful Python utilities.
 
+## Installation
 
-## ComposeRouter
+`lupl` is PEP-621-compliant package and available on PyPI.
+
+## Usage
+
+### ComposeRouter
 The ComposeRouter class allows to route attributes access for registered methods
 through a functional pipeline constructed from components.
 The pipeline is only triggered if a registered method is accessed via the ComposeRouter namespace.
 
 ```python
-from upto import ComposeRouter
+from lupl import ComposeRouter
 
 class Foo:
 	route = ComposeRouter(lambda x: x + 1, lambda y: y * 2)
@@ -30,13 +36,13 @@ print(foo.method(2, 3))           # 6
 print(foo.route.method(2, 3))     # 13
 ```
 
-## Chunk Iterator
+### Chunk Iterator
 
-The `upto.ichunk` generator implements a simple chunk iterator that allows to lazily slice an Iterator into sub-iterators.
+The `lupl.ichunk` generator implements a simple chunk iterator that allows to lazily slice an Iterator into sub-iterators.
 
 ```python
 from collections.abc import Iterator
-from upto import ichunk
+from lupl import ichunk
 
 iterator: Iterator[int] = iter(range(10))
 chunks: Iterator[Iterator[int]] = ichunk(iterator, size=3)
@@ -45,13 +51,13 @@ materialized = [tuple(chunk) for chunk in chunks]
 print(materialized)  # [(0, 1, 2), (3, 4, 5), (6, 7, 8), (9,)]
 ```
 
-## Pydantic Tools
+### Pydantic Tools
 
-### CurryModel
+#### CurryModel
 The CurryModel constructor allows to sequentially initialize (curry) a Pydantic model.
 
 ```python
-from upto import CurryModel
+from lupl import CurryModel
 
 class MyModel(BaseModel):
 	x: str
@@ -84,7 +90,7 @@ model_instance_3 = curried_model_3(x="1", y=2)(z=("3", 4))
 print(model_instance_3)
 ```
 
-### init_model_from_kwargs
+#### init_model_from_kwargs
 
 The `init_model_from_kwargs` constructor allows to initialize (potentially nested) models from (flat) kwargs.
 

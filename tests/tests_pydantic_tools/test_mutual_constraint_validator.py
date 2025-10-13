@@ -5,8 +5,8 @@ from typing import NamedTuple
 import pytest
 
 from pydantic import BaseModel, ConfigDict
-from upto import _MutualConstraintMixin
-from upto.pydantic_tools.mutual_constraint_validator import (
+from lupl import _MutualConstraintMixin
+from lupl.pydantic_tools.mutual_constraint_validator import (
     MutualDependencyException,
     MutualExclusionException,
 )

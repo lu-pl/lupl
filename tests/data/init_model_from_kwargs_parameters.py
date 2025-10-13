@@ -1,7 +1,7 @@
-"""Model and kwargs data mappings for testing upto.init_model_from_kwargs"""
+"""Model and kwargs data mappings for testing lupl.init_model_from_kwargs"""
 
 from pydantic import BaseModel
-from upto.pydantic_tools.model_constructors import init_model_from_kwargs
+from lupl.pydantic_tools.model_constructors import init_model_from_kwargs
 
 
 class SimpleModel(BaseModel):
