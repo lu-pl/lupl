@@ -1,8 +1,9 @@
 """ComposeRouter: Utility for routing methods through a functional pipeline."""
 
 from collections.abc import Callable
+from typing import Self
 
-from toolz import compose
+from toolz import compose, compose_left
 
 
 class ComposeRouter:
@@ -26,24 +27,43 @@ class ComposeRouter:
     print(foo.route.method(2, 3))     # 13
     """
 
-    def __init__(self, *components: Callable) -> None:
-        self._components: tuple[Callable, ...] = components
-        self._registry: list = []
+    def __init__(self, *components: Callable, left_associative: bool = False) -> None:
+        self.components: tuple[Callable, ...] = components
+        self.left_associative = left_associative
+
+        self._registry: list[str] = []
 
     def register[F: Callable](self, f: F) -> F:
+        """Register a method for routing through the component pipeline."""
+
         self._registry.append(f.__name__)
         return f
 
-    def __get__[T](self, instance: T, owner: type[T]):
-        class _wrapper:
-            def __init__(_self, other):
-                _self.other = other
+    def __get__[Self](self, instance: Self, owner: type[Self]):
+        class _BoundRouter:
+            """_BoundRouter is a heavily closured wrapper for handling compose calls.
+
+            Upon attribute access on the ComposeRouter descriptor,
+            _BoundRouter acts as an intermediary dispatcher that returns a composed callable
+            that applies the specified pipeline components to the requested method.
+
+            """
+
+            def __init__(_self):
+                _self.left_associative = self.left_associative
+
+            def __call__(_self, *, left_associative: bool):
+                _self.left_associative = left_associative
+                return _self
 
             def __getattr__(_self, name):
                 if name in self._registry:
-                    method = getattr(_self.other, name)
-                    return compose(*self._components, method)
+                    method = getattr(instance, name)
+
+                    if _self.left_associative:
+                        return compose_left(method, *self.components)
+                    return compose(*self.components, method)
 
                 raise AttributeError(f"Name '{name}' not registered.")
 
-        return _wrapper(instance)
+        return _BoundRouter()
