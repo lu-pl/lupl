@@ -39,7 +39,7 @@ print(foo.route.method(2, 3))     # 13
 
 By default, composition in `ComposeRouter` is *right-associative*.
 
-Associativity can be controlled by setting the `left_associative: bool` kwarg either when creating the ComposeRouter instance or when calling it.
+Associativity can be controlled by setting the `left_associative: bool` kwarg either when creating the `ComposeRouter` instance or when calling it.
 
 
 ```python
