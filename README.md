@@ -11,14 +11,15 @@ A collection of potentially generally useful Python utilities.
 
 ## Installation
 
-`lupl` is PEP-621-compliant package and available on PyPI.
+`lupl` is a [PEP-621](https://peps.python.org/pep-0621/)-compliant package and available on [PyPI](https://pypi.org/project/lupl/).
 
 ## Usage
 
 ### ComposeRouter
-The ComposeRouter class allows to route attributes access for registered methods
+
+The `ComposeRouter` class allows to route attributes access for registered methods
 through a functional pipeline constructed from components.
-The pipeline is only triggered if a registered method is accessed via the ComposeRouter namespace.
+The pipeline is only triggered if a registered method is accessed via the `ComposeRouter` namespace.
 
 ```python
 from lupl import ComposeRouter
@@ -36,9 +37,29 @@ print(foo.method(2, 3))           # 6
 print(foo.route.method(2, 3))     # 13
 ```
 
+By default, composition in `ComposeRouter` is *left-associative*.
+
+Associativity can be controlled by setting the `left_associative: bool` kwarg either when creating the ComposeRouter instance or when calling it.
+
+
+```python
+class Bar:
+	route = ComposeRouter(lambda x: x + 1, lambda y: y * 2, left_associative=True)
+
+	@route.register
+	def method(self, x, y):
+		return x * y
+
+bar = Bar()
+
+print(bar.method(2, 3))  # 6
+print(bar.route.method(2, 3))  # 14
+print(bar.route(left_associative=False).method(2, 3))  # 13
+```
+
 ### Chunk Iterator
 
-The `lupl.ichunk` generator implements a simple chunk iterator that allows to lazily slice an Iterator into sub-iterators.
+The `ichunk` generator implements a simple chunk iterator that allows to lazily slice an Iterator into sub-iterators.
 
 ```python
 from collections.abc import Iterator
@@ -54,7 +75,8 @@ print(materialized)  # [(0, 1, 2), (3, 4, 5), (6, 7, 8), (9,)]
 ### Pydantic Tools
 
 #### CurryModel
-The CurryModel constructor allows to sequentially initialize (curry) a Pydantic model.
+
+The `CurryModel` constructor allows to sequentially initialize (curry) a Pydantic model.
 
 ```python
 from lupl import CurryModel
@@ -74,7 +96,7 @@ model_instance = curried_model(z=("3", 4))
 print(model_instance)
 ```
 
-CurryModel instances are recursive so it is also possible to do this:
+`CurryModel` instances are recursive so it is also possible to do this:
 
 ```python
 curried_model_2 = CurryModel(MyModel)
@@ -82,7 +104,7 @@ model_instance_2 = curried_model_2(x="1")(y=2)(z=("3", 4))
 print(model_instance_2)
 ```
 
-Currying turns a function of arity n into at most n functions of arity 1 and at least 1 function of arity n (and everything in between), so you can also do e.g. this:
+Currying turns a function of arity *n* into at most *n* functions of arity 1 and at least 1 function of arity *n* (and everything in between), so you can also do e.g. this:
 
 ```python
 curried_model_3 = CurryModel(MyModel)
