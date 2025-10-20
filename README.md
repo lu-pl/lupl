@@ -112,38 +112,76 @@ model_instance_3 = curried_model_3(x="1", y=2)(z=("3", 4))
 print(model_instance_3)
 ```
 
-#### init_model_from_kwargs
+#### FlatInitModel
 
-The `init_model_from_kwargs` constructor allows to initialize (potentially nested) models from (flat) kwargs.
+The `FlatInitModel` constructor allows to instantiate a potentially deeply nested Pydantic model from flat kwargs.
 
 ```python
-class SimpleModel(BaseModel):
-	x: int
-	y: int = 3
+from lupl import FlatInitModel
+from pydantic import BaseModel
 
+class DeeplyNestedModel(BaseModel):
+	z: int
 
 class NestedModel(BaseModel):
-	a: str
-	b: SimpleModel
+	y: int
+	deeply_nested: DeeplyNestedModel
+
+class Model(BaseModel):
+	x: int
+	nested: NestedModel
+
+constructor = FlatInitModel(model=Model)
+
+instance: Model = constructor(x=1, y=2, z=3)
+instance.model_dump()  # {'x': 1, 'nested': {'y': 2, 'deeply_nested': {'z': 3}}}
+```
 
 
-class ComplexModel(BaseModel):
-	p: str
-	q: NestedModel
+`FlatInitModel` also handles model union types by processing the first model type of the union.
+
+A common use case for model union types is e.g. to assign a default value to a model union typed field in case a nested model instance does not meet certain criteria, i.e. fails a predicate.
+
+The `model_bool` parameter in `lupl.ConfigDict` allows to specify the condition for *model truthiness* - if the existential condition of a model is met, the model instance gets assigned to the model field, else the constructor falls back to the default value.
 
 
-# p='p value' q=NestedModel(a='a value', b=SimpleModel(x=1, y=2))
-model_instance_1 = init_model_from_kwargs(
-	ComplexModel, x=1, y=2, a="a value", p="p value"
-)
+The default condition for model truthiness is that *any* model field must be truthy for the model to be considered truthy.
 
-# p='p value' q=NestedModel(a='a value', b=SimpleModel(x=1, y=3))
-model_instance_2 = init_model_from_kwargs(
-	ComplexModel, p="p value", q=NestedModel(a="a value", b=SimpleModel(x=1))
-)
+The `model_bool` parameter takes either
 
-# p='p value' q=NestedModel(a='a value', b=SimpleModel(x=1, y=3))
-model_instance_3 = init_model_from_kwargs(
-	ComplexModel, p="p value", q=init_model_from_kwargs(NestedModel, a="a value", x=1)
-)
+- a callable object of arity 1 that receives the model instance at runtime,
+- a `str` denoting a field of the model that must be truthy in order for the model to be truthy
+- a `set[str]` denoting fields of the model, all of which must be truthy for the model to be truthy.
+
+
+The following example defines the truth condition for `DeeplyNestedModel` to be `gt3`. `NestedModel` defines a model union type with a default value - if the `model_bool` predicate fails, the constructor falls back to the default:
+
+```python
+from lupl import ConfigDict, FlatInitModel
+from pydantic import BaseModel
+
+class DeeplyNestedModel(BaseModel):
+	model_config = ConfigDict(model_bool=lambda model: model.z > 3)
+
+	z: int
+
+class NestedModel(BaseModel):
+	y: int
+	deeply_nested: DeeplyNestedModel | str = "default"
+
+class Model(BaseModel):
+	x: int
+	nested: NestedModel
+
+constructor = FlatInitModel(model=Model)
+
+instance: Model = constructor(x=1, y=2, z=3)
+instance.model_dump()  # {'x': 1, 'nested': {'y': 2, 'deeply_nested': 'default'}}
+```
+
+If the existential condition of the model is met, the model instance gets assigned:
+
+```python
+instance: Model = constructor(x=1, y=2, z=4)
+instance.model_dump()  # {'x': 1, 'nested': {'y': 2, 'deeply_nested': {'z': 4}}}
 ```
