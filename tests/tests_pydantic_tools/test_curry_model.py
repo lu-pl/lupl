@@ -1,6 +1,7 @@
 """Pytest entry point for lupl.CurryModel tests."""
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
+
 from lupl import CurryModel
 
 
@@ -13,44 +14,30 @@ def test_simple_curry_model():
     curried_model1 = CurryModel(MyModel)
     curried_model1(x="1")
     curried_model1(y=2)
-    model_instance1 = curried_model1(z=("3", 4))
+    model_instance1 = curried_model1(z=("3", 4))()
 
     curried_model_2 = CurryModel(MyModel)
-    model_instance_2 = curried_model_2(x="1")(y=2)(z=("3", 4))
+    model_instance_2 = curried_model_2(x="1")(y=2)(z=("3", 4))()
 
     curried_model_3 = CurryModel(MyModel)
-    model_instance_3 = curried_model_3(x="1", y=2)(z=("3", 4))
+    model_instance_3 = curried_model_3(x="1", y=2)(z=("3", 4))()
 
     assert model_instance1 == model_instance_2 == model_instance_3
 
 
-def test_curry_default_arg_model_eager():
-    class MyModel(BaseModel):
-        x: int
-        y: int
-        z: int = 3
+def test_curry_model_aliasing():
+    class Model(BaseModel):
+        model_config = ConfigDict(
+            alias_generator=lambda field_name: field_name * 3, validate_by_name=True
+        )
 
-    curried = CurryModel(MyModel)
-    x_curried = curried(x=1)
-    assert isinstance(x_curried, CurryModel)
+        a: int
+        b: int = Field(validation_alias="B")
+        c: int = Field(validation_alias="C", alias_priority=1)
+        d: int = Field(validation_alias="D", alias_priority=2)
 
-    model = x_curried(y=2)
-    assert isinstance(model, BaseModel)
+    curry_model = CurryModel(model=Model)(aaa=1)(B=2)(ccc=3)(D=4)(e=5)(f=6)(g=7)(h=8)
+    curry_model()
 
-
-def test_curry_default_arg_model_non_eager():
-    class MyModel(BaseModel):
-        x: int
-        y: int
-        z: int = 3
-
-    curried = CurryModel(MyModel, eager=False)
-    x_curried = curried(x=1)
-    assert isinstance(x_curried, CurryModel)
-
-    y_curried = x_curried(y=2)
-    assert isinstance(y_curried, CurryModel)
-
-    model = y_curried(z=33)
-    assert isinstance(model, BaseModel)
-    assert model.z == 33
+    curry_model = CurryModel(model=Model)(a=1)(b=2)(c=3)(d=4)(e=5)(f=6)(g=7)(h=8)
+    curry_model()
