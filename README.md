@@ -76,7 +76,10 @@ print(materialized)  # [(0, 1, 2), (3, 4, 5), (6, 7, 8), (9,)]
 
 #### CurryModel
 
-The `CurryModel` constructor allows to sequentially initialize (curry) a Pydantic model.
+`CurryModel` allows to sequentially initialize (curry) a Pydantic model.
+
+The constructor takes abitrary kwargs and validates them against the respective model fields;
+calling a `CurryModel` object without kwargs will instantiate and return the respective curried model based on an internal cache.
 
 ```python
 from lupl import CurryModel
@@ -89,27 +92,29 @@ class MyModel(BaseModel):
 
 curried_model = CurryModel(MyModel)
 
+# kwargs calls return aggregated CurryModel instances
 curried_model(x="1")
 curried_model(y=2)
+curried_model(z=("3", 4))
 
-model_instance = curried_model(z=("3", 4))
-print(model_instance)
+# call without kwargs initializes the model
+model_instance: MyModel = curried_model()
 ```
 
-`CurryModel` instances are recursive so it is also possible to do this:
+`CurryModel` instances are recursive, so it is also possible to do this:
 
 ```python
-curried_model_2 = CurryModel(MyModel)
-model_instance_2 = curried_model_2(x="1")(y=2)(z=("3", 4))
-print(model_instance_2)
+curried_model = CurryModel(MyModel)(x="1")(y=2)(z=("3", 4))
+
+model_instance: MyModel = curried_model()
 ```
 
 Currying turns a function of arity *n* into at most *n* functions of arity 1 and at least 1 function of arity *n* (and everything in between), so you can also do e.g. this:
 
 ```python
-curried_model_3 = CurryModel(MyModel)
-model_instance_3 = curried_model_3(x="1", y=2)(z=("3", 4))
-print(model_instance_3)
+curried_model = CurryModel(MyModel)
+
+model_instance: MyModel = curried_model(x="1", y=2)(z=("3", 4))()
 ```
 
 #### FlatInitModel
